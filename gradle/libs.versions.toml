@@ -39,9 +39,13 @@ paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pag
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 
 [bundles]
+androidx = ["androidx-core-ktx", "androidx-lifecycle-runtime-ktx", "androidx-activity-compose"]
+compose = ["androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling-preview", "androidx-material3"]
 retrofit = ["retrofit", "retrofit-serialization-converter", "kotlinx-serialization", "okhttp"]
 koin = ["koin-android", "koin-compose"]
 paging = ["paging-runtime", "paging-compose"]
+unit-test = ["junit"]
+instrumentation-test = ["androidx-junit", "androidx-espresso-core", "androidx-ui-test-junit4"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
