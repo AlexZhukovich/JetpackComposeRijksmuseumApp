@@ -50,6 +50,7 @@ androidx = ["androidx-core-ktx", "androidx-lifecycle-runtime-ktx", "androidx-act
 compose = ["androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling-preview", "androidx-material3"]
 retrofit = ["retrofit", "retrofit-serialization-converter", "kotlinx-serialization", "okhttp"]
 koin = ["koin-android", "koin-compose"]
+unit-test = ["junit", "truth", "turbine", "kotlinx-coroutines-test", "mock-web-server", "mockk-android"]
 instrumentation-test = ["androidx-junit", "androidx-espresso-core", "androidx-ui-test-junit4"]
 
 [plugins]
