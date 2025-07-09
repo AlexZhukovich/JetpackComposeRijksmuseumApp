@@ -1,10 +1,10 @@
 package com.alexzh.rijksmuseum.data.remote
 
 import app.cash.turbine.test
+import com.alexzh.rijksmuseum.data.remote.model.ArtObjectDetailInformationResponse
 import com.alexzh.rijksmuseum.data.remote.model.ArtObjectDetailsResponse
 import com.alexzh.rijksmuseum.data.remote.model.ArtObjectResponse
 import com.alexzh.rijksmuseum.data.remote.model.ArtObjectsResponse
-import com.alexzh.rijksmuseum.data.remote.model.LinksResponse
 import com.alexzh.rijksmuseum.domain.Result
 import com.alexzh.rijksmuseum.domain.exception.ApiException
 import com.alexzh.rijksmuseum.domain.exception.ArtObjectNotFoundException
@@ -33,16 +33,12 @@ class RemoteArtObjectsRepositoryTest {
         val id = UUID.randomUUID().toString()
         val objectNumber = UUID.randomUUID().toString()
         val title = UUID.randomUUID().toString()
-        val longTitle = UUID.randomUUID().toString()
         val response = ArtObjectsResponse(
             artObjects = listOf(
                 ArtObjectResponse(
-                    links = LinksResponse(),
                     id = id,
                     objectNumber = objectNumber,
                     title = title,
-                    longTitle = longTitle,
-                    productionPlaces = emptyList()
                 )
             ),
             count = 1
@@ -58,7 +54,6 @@ class RemoteArtObjectsRepositoryTest {
             assertThat(success.data.items.first().id).isEqualTo(id)
             assertThat(success.data.items.first().objectNumber).isEqualTo(objectNumber)
             assertThat(success.data.items.first().title).isEqualTo(title)
-            assertThat(success.data.items.first().longTitle).isEqualTo(longTitle)
             assertThat(success.data.currentPage).isEqualTo(1)
             assertThat(success.data.totalCount).isEqualTo(1)
 
@@ -128,15 +123,15 @@ class RemoteArtObjectsRepositoryTest {
         val objectNumber = UUID.randomUUID().toString()
         val title = UUID.randomUUID().toString()
         val longTitle = UUID.randomUUID().toString()
+        val plaqueDescriptionEnglish = UUID.randomUUID().toString()
 
         val response = ArtObjectDetailsResponse(
-            artObject = ArtObjectResponse(
-                links = LinksResponse(),
+            artObject = ArtObjectDetailInformationResponse(
                 id = id,
                 objectNumber = objectNumber,
                 title = title,
                 longTitle = longTitle,
-                productionPlaces = emptyList()
+                plaqueDescriptionEnglish = plaqueDescriptionEnglish
             )
         )
 
@@ -150,6 +145,7 @@ class RemoteArtObjectsRepositoryTest {
             assertThat(success.data.objectNumber).isEqualTo(objectNumber)
             assertThat(success.data.title).isEqualTo(title)
             assertThat(success.data.longTitle).isEqualTo(longTitle)
+            assertThat(success.data.plaqueDescriptionEnglish).isEqualTo(plaqueDescriptionEnglish)
 
             awaitComplete()
         }

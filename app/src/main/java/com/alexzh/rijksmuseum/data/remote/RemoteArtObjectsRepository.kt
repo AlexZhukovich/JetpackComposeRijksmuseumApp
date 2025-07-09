@@ -7,8 +7,10 @@ import com.alexzh.rijksmuseum.domain.exception.ArtObjectNotFoundException
 import com.alexzh.rijksmuseum.domain.exception.NetworkException
 import com.alexzh.rijksmuseum.domain.exception.UnauthorizedException
 import com.alexzh.rijksmuseum.data.mapper.toArtObject
+import com.alexzh.rijksmuseum.data.mapper.toArtObjectDetails
 import com.alexzh.rijksmuseum.data.remote.model.ArtObjectsPage
 import com.alexzh.rijksmuseum.domain.model.ArtObject
+import com.alexzh.rijksmuseum.domain.model.ArtObjectDetails
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okio.IOException
@@ -65,14 +67,14 @@ class RemoteArtObjectsRepository(
         }
     }
 
-    override fun getArtObjectDetails(objectNumber: String): Flow<Result<ArtObject>> {
+    override fun getArtObjectDetails(objectNumber: String): Flow<Result<ArtObjectDetails>> {
         return flow {
             emit(Result.Loading())
 
             try {
                 val data = api.getArtObjectDetails(objectNumber)
                 if (data.artObject != null) {
-                    emit(Result.Success(data.artObject.toArtObject()))
+                    emit(Result.Success(data.artObject.toArtObjectDetails()))
                 } else {
                     emit(Result.Error(ArtObjectNotFoundException()))
                 }

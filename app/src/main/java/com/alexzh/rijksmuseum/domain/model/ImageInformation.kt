@@ -5,4 +5,7 @@ data class ImageInformation(
     val width: Int,
     val height: Int,
     val url: String
-)
+) {
+    val aspectRatio: Float
+        get() = width.toFloat() / height.toFloat()
+}

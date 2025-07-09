@@ -39,6 +39,7 @@ kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-serialization-converter = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+okhttp-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinCoroutines"}
@@ -49,6 +50,7 @@ mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 androidx = ["androidx-core-ktx", "androidx-lifecycle-runtime-ktx", "androidx-activity-compose"]
 compose = ["androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling-preview", "androidx-material3"]
 retrofit = ["retrofit", "retrofit-serialization-converter", "kotlinx-serialization", "okhttp"]
+retrofit = ["retrofit", "retrofit-serialization-converter", "kotlinx-serialization", "okhttp", "okhttp-logging"]
 koin = ["koin-android", "koin-compose"]
 unit-test = ["junit", "truth", "turbine", "kotlinx-coroutines-test", "mock-web-server", "mockk-android"]
 instrumentation-test = ["androidx-junit", "androidx-espresso-core", "androidx-ui-test-junit4"]

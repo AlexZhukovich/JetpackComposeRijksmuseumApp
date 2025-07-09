@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ArtObjectDetailsResponse(
-    @SerialName("artObject") val artObject: ArtObjectResponse?
+    @SerialName("artObject") val artObject: ArtObjectDetailInformationResponse?
 )

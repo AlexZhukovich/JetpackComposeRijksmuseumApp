@@ -8,10 +8,7 @@ fun ArtObjectResponse.toArtObject(): ArtObject {
         id = this.id,
         objectNumber = this.objectNumber,
         title = this.title,
-        longTitle = this.longTitle,
-        links = this.links.toArtObjectLinks(),
         webImage = this.webImage?.toImageInformation(),
-        headerImage = this.headerImage?.toImageInformation(),
-        productionPlaces = this.productionPlaces
+        headerImage = this.headerImage?.toImageInformation()
     )
 }
