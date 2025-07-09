@@ -1,8 +1,5 @@
 package com.alexzh.rijksmuseum.data.remote
 
-import androidx.paging.PagingConfig
-import androidx.paging.PagingSource
-import androidx.paging.testing.TestPager
 import app.cash.turbine.test
 import com.alexzh.rijksmuseum.data.remote.model.ArtObjectDetailsResponse
 import com.alexzh.rijksmuseum.data.remote.model.ArtObjectResponse
@@ -27,16 +24,8 @@ import java.util.UUID
 class RemoteArtObjectsRepositoryTest {
 
     private val api = mockk<RijksmuseumApi>()
-    private val pagingConfig = PagingConfig(
-        pageSize = 20
-    )
-    private val pagingSourceFactory: () -> ArtObjectsPagingSource = {
-        ArtObjectsPagingSource(api)
-    }
     private val repository = RemoteArtObjectsRepository(
-        api = api,
-        pagingConfig = pagingConfig,
-        pagingSourceFactory = pagingSourceFactory
+        api = api
     )
 
     @Test
@@ -45,8 +34,7 @@ class RemoteArtObjectsRepositoryTest {
         val objectNumber = UUID.randomUUID().toString()
         val title = UUID.randomUUID().toString()
         val longTitle = UUID.randomUUID().toString()
-
-        coEvery { api.getArtObjects(any(), any()) } returns ArtObjectsResponse(
+        val response = ArtObjectsResponse(
             artObjects = listOf(
                 ArtObjectResponse(
                     links = LinksResponse(),
@@ -60,16 +48,22 @@ class RemoteArtObjectsRepositoryTest {
             count = 1
         )
 
-        val pager = TestPager(
-            config = pagingConfig,
-            pagingSource = pagingSourceFactory()
-        )
+        coEvery { api.getArtObjects(any(), any()) } returns response
 
-        val result = pager.refresh() as PagingSource.LoadResult.Page
-        assertThat(result.data.map { it.id }).containsExactly(id)
-        assertThat(result.data.map { it.objectNumber }).containsExactly(objectNumber)
-        assertThat(result.data.map { it.title }).containsExactly(title)
-        assertThat(result.data.map { it.longTitle }).containsExactly(longTitle)
+        repository.getArtObjects(1, 20).test {
+            assertThat(awaitItem()).isInstanceOf(Result.Loading::class.java)
+
+            val success = awaitItem() as Result.Success
+            assertThat(success.data.items.size).isEqualTo(1)
+            assertThat(success.data.items.first().id).isEqualTo(id)
+            assertThat(success.data.items.first().objectNumber).isEqualTo(objectNumber)
+            assertThat(success.data.items.first().title).isEqualTo(title)
+            assertThat(success.data.items.first().longTitle).isEqualTo(longTitle)
+            assertThat(success.data.currentPage).isEqualTo(1)
+            assertThat(success.data.totalCount).isEqualTo(1)
+
+            awaitComplete()
+        }
     }
 
 
@@ -83,13 +77,14 @@ class RemoteArtObjectsRepositoryTest {
         val expectedError = UnauthorizedException()
         coEvery { api.getArtObjects(any(), any()) } throws HttpException(response)
 
-        val pager = TestPager(
-            config = pagingConfig,
-            pagingSource = pagingSourceFactory()
-        )
+        repository.getArtObjects(1, 20).test {
+            assertThat(awaitItem()).isInstanceOf(Result.Loading::class.java)
 
-        val result = pager.refresh() as PagingSource.LoadResult.Error
-        assertThat(result.throwable.message).isEqualTo(expectedError.message)
+            val error = awaitItem() as Result.Error
+            assertThat(error.cause.message).isEqualTo(expectedError.message)
+
+            awaitComplete()
+        }
     }
 
     @Test
@@ -101,13 +96,14 @@ class RemoteArtObjectsRepositoryTest {
         val expectedError = ApiException()
         coEvery { api.getArtObjects(any(), any()) } throws HttpException(response)
 
-        val pager = TestPager(
-            config = pagingConfig,
-            pagingSource = pagingSourceFactory()
-        )
+        repository.getArtObjects(1, 20).test {
+            assertThat(awaitItem()).isInstanceOf(Result.Loading::class.java)
 
-        val result = pager.refresh() as PagingSource.LoadResult.Error
-        assertThat(result.throwable.message).isEqualTo(expectedError.message)
+            val error = awaitItem() as Result.Error
+            assertThat(error.cause.message).isEqualTo(expectedError.message)
+
+            awaitComplete()
+        }
     }
 
     @Test
@@ -116,28 +112,14 @@ class RemoteArtObjectsRepositoryTest {
 
         coEvery { api.getArtObjects(any(), any()) } throws IOException()
 
-        val pager = TestPager(
-            config = pagingConfig,
-            pagingSource = pagingSourceFactory()
-        )
+        repository.getArtObjects(1, 20).test {
+            assertThat(awaitItem()).isInstanceOf(Result.Loading::class.java)
 
-        val result = pager.refresh() as PagingSource.LoadResult.Error
-        assertThat(result.throwable.message).isEqualTo(expectedError.message)
-    }
+            val error = awaitItem() as Result.Error
+            assertThat(error.cause.message).isEqualTo(expectedError.message)
 
-    @Test
-    fun `getArtObjects should emit error when no error happened`() = runTest {
-        val error = RuntimeException()
-
-        coEvery { api.getArtObjects(any(), any()) } throws error
-
-        val pager = TestPager(
-            config = pagingConfig,
-            pagingSource = pagingSourceFactory()
-        )
-
-        val result = pager.refresh() as PagingSource.LoadResult.Error
-        assertThat(result.throwable).isEqualTo(error)
+            awaitComplete()
+        }
     }
 
     @Test

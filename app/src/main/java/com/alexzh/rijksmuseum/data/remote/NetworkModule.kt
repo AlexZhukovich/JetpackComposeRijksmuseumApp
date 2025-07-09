@@ -1,6 +1,5 @@
 package com.alexzh.rijksmuseum.data.remote
 
-import androidx.paging.PagingConfig
 import com.alexzh.rijksmuseum.domain.ArtObjectsRepository
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -34,22 +33,9 @@ val networkModule = module {
     single<RijksmuseumApi> {
         get<Retrofit>().create(RijksmuseumApi::class.java)
     }
-    single<PagingConfig> {
-        PagingConfig(
-            pageSize = 20,
-            prefetchDistance = 5,
-            enablePlaceholders = true,
-            initialLoadSize = 20
-        )
-    }
-    single<ArtObjectsPagingSource> {
-        ArtObjectsPagingSource(get<RijksmuseumApi>())
-    }
     single<ArtObjectsRepository> {
         RemoteArtObjectsRepository(
-            api = get<RijksmuseumApi>(),
-            pagingConfig = get<PagingConfig>(),
-            pagingSourceFactory = { get<ArtObjectsPagingSource>() }
+            api = get<RijksmuseumApi>()
         )
     }
 }
