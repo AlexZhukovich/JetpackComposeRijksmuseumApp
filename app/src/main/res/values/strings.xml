@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">RijksmuseumApp</string>
+    <string name="app_name">Rijksmuseum App</string>
+
+    <string name="artObjectsScreen_header_label">Art Objects</string>
+    <string name="artObjectsScreen_initialLoading_label">Loading art objects</string>
+
+    <string name="artObjectDetailsScreen_loading_label">Loading information about the art object</string>
+
+    <string name="error_artObjectDetailsNotFound_label">Art object not found</string>
+    <string name="error_artObjectDetailsLoadingError_label">Couldn\'t load art object</string>
+    <string name="error_artObjectsLoadingError_label">Couldn\'t load art objects</string>
+    <string name="error_connectivityError_label">No internet connection</string>
+
+    <string name="common_tryAgainButton_label">Try Again</string>
+    <string name="common_navigateUp_label">Navigate Up</string>
 </resources>

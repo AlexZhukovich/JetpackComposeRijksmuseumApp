@@ -10,5 +10,5 @@ data class ArtObjectDetailInformationResponse(
     @SerialName("title") val title: String,
     @SerialName("longTitle") val longTitle: String,
     @SerialName("webImage") val webImage: ImageInformationResponse? = null,
-    @SerialName("plaqueDescriptionEnglish") val plaqueDescriptionEnglish: String
+    @SerialName("plaqueDescriptionEnglish") val plaqueDescriptionEnglish: String? = null
 )

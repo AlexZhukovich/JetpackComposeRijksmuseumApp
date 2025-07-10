@@ -6,5 +6,5 @@ data class ArtObjectDetails(
     val title: String,
     val longTitle: String,
     val webImage: ImageInformation? = null,
-    val plaqueDescriptionEnglish: String,
+    val plaqueDescriptionEnglish: String? = null,
 )

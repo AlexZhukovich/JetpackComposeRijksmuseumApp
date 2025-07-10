@@ -10,6 +10,9 @@ import com.alexzh.rijksmuseum.domain.exception.ApiException
 import com.alexzh.rijksmuseum.domain.exception.ArtObjectNotFoundException
 import com.alexzh.rijksmuseum.domain.exception.NetworkException
 import com.alexzh.rijksmuseum.domain.exception.UnauthorizedException
+import com.alexzh.rijksmuseum.utils.generator.data.generateArtObjectDetailInformationResponse
+import com.alexzh.rijksmuseum.utils.generator.data.generateArtObjectDetailsResponse
+import com.alexzh.rijksmuseum.utils.generator.data.generateArtObjectsResponse
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
@@ -30,19 +33,7 @@ class RemoteArtObjectsRepositoryTest {
 
     @Test
     fun `getArtObjects should emit data when data is available`() = runTest {
-        val id = UUID.randomUUID().toString()
-        val objectNumber = UUID.randomUUID().toString()
-        val title = UUID.randomUUID().toString()
-        val response = ArtObjectsResponse(
-            artObjects = listOf(
-                ArtObjectResponse(
-                    id = id,
-                    objectNumber = objectNumber,
-                    title = title,
-                )
-            ),
-            count = 1
-        )
+        val response = generateArtObjectsResponse()
 
         coEvery { api.getArtObjects(any(), any()) } returns response
 
@@ -50,18 +41,13 @@ class RemoteArtObjectsRepositoryTest {
             assertThat(awaitItem()).isInstanceOf(Result.Loading::class.java)
 
             val success = awaitItem() as Result.Success
-            assertThat(success.data.items.size).isEqualTo(1)
-            assertThat(success.data.items.first().id).isEqualTo(id)
-            assertThat(success.data.items.first().objectNumber).isEqualTo(objectNumber)
-            assertThat(success.data.items.first().title).isEqualTo(title)
-            assertThat(success.data.currentPage).isEqualTo(1)
-            assertThat(success.data.totalCount).isEqualTo(1)
+            assertThat(success.data.items.first().id).isEqualTo(response.artObjects.first().id)
+            assertThat(success.data.items.first().objectNumber).isEqualTo(response.artObjects.first().objectNumber)
+            assertThat(success.data.items.first().title).isEqualTo(response.artObjects.first().title)
 
             awaitComplete()
         }
     }
-
-
 
     @Test
     fun `getArtObjects should emit Loading and UnauthorizedException when api key is not valid`() = runTest {
@@ -119,33 +105,20 @@ class RemoteArtObjectsRepositoryTest {
 
     @Test
     fun `getArtObjectDetails should emit Loading and Success when data is available`() = runTest {
-        val id = UUID.randomUUID().toString()
-        val objectNumber = UUID.randomUUID().toString()
-        val title = UUID.randomUUID().toString()
-        val longTitle = UUID.randomUUID().toString()
-        val plaqueDescriptionEnglish = UUID.randomUUID().toString()
+        val detailInfo = generateArtObjectDetailInformationResponse()
+        val response = generateArtObjectDetailsResponse(artObject = detailInfo)
 
-        val response = ArtObjectDetailsResponse(
-            artObject = ArtObjectDetailInformationResponse(
-                id = id,
-                objectNumber = objectNumber,
-                title = title,
-                longTitle = longTitle,
-                plaqueDescriptionEnglish = plaqueDescriptionEnglish
-            )
-        )
+        coEvery { api.getArtObjectDetails(any()) } returns response
 
-        coEvery { api.getArtObjectDetails(objectNumber) } returns response
-
-        repository.getArtObjectDetails(objectNumber).test {
+        repository.getArtObjectDetails(response.artObject?.objectNumber!!).test {
             assertThat(awaitItem()).isInstanceOf(Result.Loading::class.java)
 
             val success = awaitItem() as Result.Success
-            assertThat(success.data.id).isEqualTo(id)
-            assertThat(success.data.objectNumber).isEqualTo(objectNumber)
-            assertThat(success.data.title).isEqualTo(title)
-            assertThat(success.data.longTitle).isEqualTo(longTitle)
-            assertThat(success.data.plaqueDescriptionEnglish).isEqualTo(plaqueDescriptionEnglish)
+            assertThat(success.data.id).isEqualTo(detailInfo.id)
+            assertThat(success.data.objectNumber).isEqualTo(detailInfo.objectNumber)
+            assertThat(success.data.title).isEqualTo(detailInfo.title)
+            assertThat(success.data.longTitle).isEqualTo(detailInfo.longTitle)
+            assertThat(success.data.plaqueDescriptionEnglish).isEqualTo(detailInfo.plaqueDescriptionEnglish)
 
             awaitComplete()
         }

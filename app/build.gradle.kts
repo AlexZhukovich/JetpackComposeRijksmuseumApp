@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.koin)
+    implementation(libs.bundles.coil)
 
     testImplementation(libs.bundles.unit.test)
 
